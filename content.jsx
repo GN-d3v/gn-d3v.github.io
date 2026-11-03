@@ -17,7 +17,7 @@ const CONTENT = {
       { id: "contact", label: "/contact" },
     ],
     hero: {
-      preTag: "// studenti di ingegneria informatica · sviluppatori",
+      preTag: "// ingegneri informatici · sviluppo software",
       tagPre: "Costruiamo software ",
       tagEm: "che funziona davvero",
       tagPost: ", su misura per te.",
@@ -136,17 +136,17 @@ const CONTENT = {
     team: {
       label: "04 — chi siamo",
       heading: "Il team",
-      headingSub: "Tre studenti di Ingegneria Informatica appassionati di sviluppo software.",
+      headingSub: "Tre laureati in Ingegneria Informatica, con competenze nello sviluppo software.",
       members: [
         {
           glyph: "F",
           name: "Filippo Carletti",
           role: "// full-stack developer",
-          bio: "Laureando in Ingegneria Informatica. Sviluppatore full-stack con un occhio al design e all'esperienza utente. Porta le interfacce al livello successivo senza trascurare la logica dietro.",
+          bio: "Laureato in Ingegneria Informatica. Sviluppatore full-stack con un occhio al design e all'esperienza utente. Porta le interfacce al livello successivo senza trascurare la logica dietro.",
           stats: [
             { k: "ruolo", v: "Full-Stack" },
             { k: "stack", v: "React·TS" },
-            { k: "status", v: "laureando" },
+            { k: "status", v: "laureato" },
           ],
         },
         {
@@ -164,11 +164,11 @@ const CONTENT = {
           glyph: "Y",
           name: "Yari Bellardini",
           role: "// full-stack developer",
-          bio: "Laureando in Ingegneria Informatica. Sviluppatore full-stack con forte focus sul backend e le API. Appassionato di architetture scalabili e sistemi ad alte prestazioni.",
+          bio: "Laureato in Ingegneria Informatica. Sviluppatore full-stack con forte focus sul backend e le API. Appassionato di architetture scalabili e sistemi ad alte prestazioni.",
           stats: [
             { k: "ruolo", v: "Full-Stack" },
             { k: "stack", v: "React·Node" },
-            { k: "status", v: "laureando" },
+            { k: "status", v: "laureato" },
           ],
         },
       ],
@@ -220,7 +220,7 @@ const CONTENT = {
       { id: "contact", label: "/contact" },
     ],
     hero: {
-      preTag: "// computer engineering students · developers",
+      preTag: "// computer engineering graduates · developers",
       tagPre: "We build software ",
       tagEm: "that actually works",
       tagPost: ", tailored for you.",
@@ -339,17 +339,17 @@ const CONTENT = {
     team: {
       label: "04 — who we are",
       heading: "The team",
-      headingSub: "Three Computer Engineering students passionate about software development.",
+      headingSub: "Three Computer Engineering graduates with a shared focus on software development.",
       members: [
         {
           glyph: "F",
           name: "Filippo Carletti",
           role: "// full-stack developer",
-          bio: "Computer Engineering student. Full-stack developer with a strong focus on backend and APIs. Passionate about scalable architectures and high-performance systems.",
+          bio: "Computer Engineering graduate. Full-stack developer with a strong focus on backend and APIs. Passionate about scalable architectures and high-performance systems.",
           stats: [
             { k: "role", v: "Full-Stack" },
             { k: "stack", v: "TS·Node" },
-            { k: "status", v: "studying" },
+            { k: "status", v: "graduate" },
           ],
         },
         {
@@ -367,11 +367,11 @@ const CONTENT = {
           glyph: "Y",
           name: "Yari Bellardini",
           role: "// full-stack developer",
-          bio: "Computer Engineering student. Full-stack developer with an eye for design and user experience. Brings interfaces to the next level without neglecting the logic behind them.",
+          bio: "Computer Engineering graduate. Full-stack developer with an eye for design and user experience. Brings interfaces to the next level without neglecting the logic behind them.",
           stats: [
             { k: "role", v: "Full-Stack" },
             { k: "stack", v: "React·TS" },
-            { k: "status", v: "studying" },
+            { k: "status", v: "graduate" },
           ],
         },
       ],

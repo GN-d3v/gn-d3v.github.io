@@ -1,6 +1,6 @@
 # Portfolio Sviluppatori
 
-Siamo un team di 3 studenti di ingegneria informatica appassionati di sviluppo software. Creiamo siti web, applicazioni e web app su misura per ogni esigenza: dagli e-commerce ai gestionali, passando per piattaforme di corsi e siti vetrina per la pubblicizzazione di app.
+Siamo un team di 3 laureati in ingegneria informatica appassionati di sviluppo software. Creiamo siti web, applicazioni e web app su misura per ogni esigenza: dagli e-commerce ai gestionali, passando per piattaforme di corsi e siti vetrina per la pubblicizzazione di app.
 
 ---
 
@@ -8,8 +8,8 @@ Siamo un team di 3 studenti di ingegneria informatica appassionati di sviluppo s
 
 Siamo un gruppo coeso con solide basi in Ingegneria Informatica:
 - **Paolo Iacovissi**: Ingegnere Informatico (Laureato)
-- **Filippo Carletti**: Studente di Ingegneria Informatica (Laureando)
-- **Yari Bellardini**: Studente di Ingegneria Informatica (Laureando)
+- **Filippo Carletti**: Ingegnere Informatico (Laureato)
+- **Yari Bellardini**: Ingegnere Informatico (Laureato)
 
 ---
 

@@ -1,216 +1,35 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GN d3v · collettivo di sviluppatori</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GN d3v — Software su misura per le aziende</title>
+<meta name="description" content="GN d3v progetta e sviluppa software, piattaforme digitali e applicazioni su misura per le aziende.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css?v=6">
 </head>
-<body data-anim="full">
-  <div class="scanlines"></div>
-  <div class="vignette"></div>
-  <div class="scroll-bar" id="scrollbar"></div>
-
-  <div id="root"></div>
-
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
-  <script type="text/babel" src="content.jsx"></script>
-  <script type="text/babel" src="sections.jsx"></script>
-
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
-
-    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "animStyle": "full",
-      "scanlines": true,
-      "accent": "#5fdc8b"
-    }/*EDITMODE-END*/;
-
-    function StatusBar({ t, lang, setLang, time }) {
-      return (
-        <div className="statusbar">
-          <div className="group">
-            <span className="dot"></span>
-            <span className="status-text">{t.statusbar.status}</span>
-          </div>
-          <span className="sep hide-mobile">│</span>
-          <span className="hide-mobile">{t.statusbar.version}</span>
-          <span className="sep hide-mobile">│</span>
-          <span className="hide-mobile">{t.statusbar.uptime}</span>
-          <div className="right">
-            <span className="hide-mobile" style={{ fontVariantNumeric: 'tabular-nums' }}>{time}</span>
-            <div className="lang-switch">
-              <button className={lang === "it" ? "active" : ""} onClick={() => setLang("it")}>IT</button>
-              <button className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>EN</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function SideRail({ t, active }) {
-      return (
-        <nav className="siderail">
-          {t.nav.map((n) => (
-            <a key={n.id} href={`#${n.id}`} className={active === n.id ? "active" : ""}>
-              <span>{n.label}</span>
-            </a>
-          ))}
-        </nav>
-      );
-    }
-
-    function Footer({ t }) {
-      return (
-        <footer>
-          <div>{t.footer.left}</div>
-          <div>{t.footer.right} <span className="heart">{t.footer.heart}</span></div>
-        </footer>
-      );
-    }
-
-    function Konami({ onClose }) {
-      return (
-        <div className="konami" onClick={onClose}>
-          <pre>{`
-   ▄▄ • ███▄    █ ▓█████▄  ██▓███   ██▒   █▓
-  ▐█ ▀ ▪ ██ ▀█   █ ▒██▀ ██▌▓██░  ██▒▓██░   █▒
-  ▄█ ▀█▄ ▓██  ▀█ ██▒░██   █▌▓██░ ██▓▒ ▓██  █▒░
-  ▐█▄▪▐█ ▓██▒  ▐▌██▒░▓█▄   ▌▒██▄█▓▒ ▒  ▒██ █░░
-  ·▀▀▀▀  ▒██░   ▓██░░▒████▓ ▒██▒ ░  ░   ▒▀█░
-                                          ░ ▐░
-        secret unlocked · you found us.
-`}</pre>
-          <div className="hint">// click anywhere to close</div>
-        </div>
-      );
-    }
-
-    function App() {
-      const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
-      const [lang, setLang] = useState("it");
-      const [active, setActive] = useState("hero");
-      const [time, setTime] = useState("");
-      const [konami, setKonami] = useState(false);
-
-      const t = CONTENT[lang];
-
-      useReveal();
-
-      // animation style on body
-      useEffect(() => {
-        document.body.dataset.anim = tw.animStyle;
-        document.documentElement.style.setProperty("--green", tw.accent);
-      }, [tw.animStyle, tw.accent]);
-
-      // scanlines visibility
-      useEffect(() => {
-        document.querySelector(".scanlines").style.display = tw.scanlines ? "block" : "none";
-      }, [tw.scanlines]);
-
-      // clock
-      useEffect(() => {
-        const update = () => {
-          const d = new Date();
-          const hh = String(d.getHours()).padStart(2, "0");
-          const mm = String(d.getMinutes()).padStart(2, "0");
-          const ss = String(d.getSeconds()).padStart(2, "0");
-          setTime(`${hh}:${mm}:${ss}`);
-        };
-        update();
-        const id = setInterval(update, 1000);
-        return () => clearInterval(id);
-      }, []);
-
-      // scroll progress + active section
-      useEffect(() => {
-        const onScroll = () => {
-          const h = document.documentElement;
-          const max = h.scrollHeight - h.clientHeight;
-          const p = max > 0 ? (h.scrollTop / max) * 100 : 0;
-          document.getElementById("scrollbar").style.width = p + "%";
-          // active section
-          const ids = t.nav.map((n) => n.id);
-          let cur = ids[0];
-          for (const id of ids) {
-            const el = document.getElementById(id);
-            if (!el) continue;
-            const r = el.getBoundingClientRect();
-            if (r.top < window.innerHeight * 0.4) cur = id;
-          }
-          setActive(cur);
-        };
-        onScroll();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
-      }, [lang]);
-
-      // konami code: ↑ ↑ ↓ ↓ ← → ← → b a
-      useEffect(() => {
-        const seq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-        let idx = 0;
-        const onKey = (e) => {
-          const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-          if (k === seq[idx]) {
-            idx++;
-            if (idx === seq.length) { setKonami(true); idx = 0; }
-          } else {
-            idx = (k === seq[0]) ? 1 : 0;
-          }
-        };
-        window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-      }, []);
-
-      return (
-        <>
-          <StatusBar t={t} lang={lang} setLang={setLang} time={time} />
-          <SideRail t={t} active={active} />
-          <main>
-            <Hero t={t} key={"hero-" + lang} />
-            <Manifesto t={t} key={"man-" + lang} />
-            <Services t={t} key={"svc-" + lang} />
-            <Projects t={t} key={"prj-" + lang} />
-            <Team t={t} key={"tm-" + lang} />
-            <Contact t={t} key={"ct-" + lang} />
-            <Footer t={t} />
-          </main>
-          {konami && <Konami onClose={() => setKonami(false)} />}
-
-          <TweaksPanel>
-            <TweakSection label="Animations" />
-            <TweakRadio
-              label="Style"
-              value={tw.animStyle}
-              options={["off", "subtle", "full"]}
-              onChange={(v) => setTweak("animStyle", v)}
-            />
-            <TweakToggle
-              label="CRT scanlines"
-              value={tw.scanlines}
-              onChange={(v) => setTweak("scanlines", v)}
-            />
-            <TweakSection label="Theme" />
-            <TweakColor
-              label="Accent"
-              value={tw.accent}
-              options={["#5fdc8b", "#f5b454", "#6bb8ff", "#ff7eb6"]}
-              onChange={(v) => setTweak("accent", v)}
-            />
-          </TweaksPanel>
-        </>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
-</body>
-</html>
+<body>
+<header class="header"><div class="wrap header-inner"><a class="brand" href="#top" aria-label="GN d3v, pagina iniziale">GN<span>d3v</span><i>.</i></a><nav aria-label="Navigazione principale"><a href="#servizi">Servizi</a><a href="#progetti">Progetti</a><a href="#team">Chi siamo</a></nav><details class="mobile-menu"><summary aria-label="Menu di navigazione"><span aria-hidden="true"></span></summary><nav aria-label="Navigazione mobile"><a href="#servizi">Servizi</a><a href="#progetti">Progetti</a><a href="#team">Chi siamo</a><a href="#contatti">Contatti</a></nav></details><a class="header-cta" href="#contatti">Contattaci <span>↓</span></a></div></header>
+<main id="top">
+<section class="hero"><div class="wrap hero-grid"><div><p class="eyebrow"><span></span> STUDIO DI SVILUPPO SOFTWARE</p><h1>Le idee migliori meritano <em>software solido.</em></h1><p class="hero-copy">Progettiamo e sviluppiamo piattaforme digitali, applicazioni e strumenti su misura per aiutare le aziende a lavorare meglio e crescere.</p><div class="actions"><a class="button primary" href="#servizi">Scopri i servizi <span>↓</span></a><a class="text-link" href="#progetti">Esplora i progetti <span>↓</span></a></div></div><div class="hero-panel process-panel"><div class="panel-top"><span>COME LAVORIAMO</span><span>01 — 04</span></div><div class="process-list"><div class="process-step"><span>01</span><div><strong>La vostra esigenza</strong><p>Partiamo dai vostri obiettivi e dalle necessità del progetto.</p></div></div><div class="process-step"><span>02</span><div><strong>Analisi e progettazione</strong><p>Definiamo insieme la soluzione e le sue priorità.</p></div></div><div class="process-step"><span>03</span><div><strong>Sviluppo</strong><p>Realizziamo il prodotto, curando funzionalità ed esperienza.</p></div></div><div class="process-step"><span>04</span><div><strong>Prodotto digitale</strong><p>Portiamo il progetto alla sua messa online.</p></div></div></div><div class="panel-bottom"><p>Un percorso condiviso.<br><strong>Una soluzione su misura.</strong></p><span>↗</span></div></div></div><div class="wrap hero-bottom"><span>STRATEGIA</span><span>DESIGN</span><span>SVILUPPO</span><span>EVOLUZIONE</span></div></section>
+<section class="intro section" id="approccio"><div class="wrap split"><p class="eyebrow dark">01 / IL NOSTRO APPROCCIO</p><div><h2>Un partner tecnico, <em>dal primo confronto al prodotto.</em></h2><p class="lead">Ogni azienda ha esigenze diverse. Per questo partiamo dall’ascolto e trasformiamo obiettivi concreti in esperienze digitali chiare, funzionali e costruite su misura.</p></div></div></section>
+<section class="section services" id="servizi"><div class="wrap"><div class="section-heading"><div><p class="eyebrow dark">02 / COSA FACCIAMO</p><h2>Competenze che<br><em>prendono forma.</em></h2></div><p>Dall’interfaccia all’infrastruttura, sviluppiamo soluzioni pensate intorno al vostro lavoro e alle persone che le useranno.</p></div><div class="service-list"><article><span class="number">01</span><div><h3>Siti web e piattaforme</h3><p>Presenza digitale, portali e applicazioni web progettati per comunicare con chiarezza e offrire esperienze semplici da usare.</p></div><span class="service-arrow">↗</span></article><article><span class="number">02</span><div><h3>E-commerce e marketplace</h3><p>Esperienze di vendita online su misura, con attenzione ai processi di acquisto, ai pagamenti e alla gestione dei prodotti.</p></div><span class="service-arrow">↗</span></article><article><span class="number">03</span><div><h3>Software gestionale</h3><p>Strumenti digitali per organizzare informazioni e attività, adattati ai processi e alle esigenze della vostra azienda.</p></div><span class="service-arrow">↗</span></article><article><span class="number">04</span><div><h3>Applicazioni mobile</h3><p>Prodotti mobile che portano servizi e contenuti più vicino alle persone, dalla definizione dell’idea allo sviluppo.</p></div><span class="service-arrow">↗</span></article></div></div></section>
+<section class="section projects" id="progetti"><div class="wrap"><div class="section-heading"><div><p class="eyebrow light">03 / PROGETTI SELEZIONATI</p><h2>Il lavoro parla<br><em>per noi.</em></h2></div><p>Progetti diversi, un unico obiettivo: creare prodotti digitali utili, costruiti intorno a esigenze concrete.</p></div><div class="project-grid"><a class="project featured" href="https://gn-d3v.github.io/litrowine/" target="_blank" rel="noopener"><div class="project-visual wine"><span class="visual-label">COMMERCE / 01</span><div class="wine-mark">L<span>.</span></div><div class="visual-foot">LITRO WINE <span>↗</span></div></div><div class="project-info"><div><p>MARKETPLACE · E-COMMERCE</p><h3>Litro Wine</h3><span>Un marketplace per la vendita online di vini e prodotti affini.</span></div><b>↗</b></div></a><a class="project" href="https://gn-d3v.github.io/littlestar/" target="_blank" rel="noopener"><div class="project-visual pet"><span class="visual-label">MOBILE / 02</span><div class="pet-mark">✳</div><div class="visual-foot">LITTLESTAR <span>↗</span></div></div><div class="project-info"><div><p>APP MOBILE · COMMUNITY</p><h3>Littlestar</h3><span>Un’app dedicata agli animali e alle persone che se ne prendono cura.</span></div><b>↗</b></div></a><a class="project" href="https://gn-d3v.github.io/stonksapp/" target="_blank" rel="noopener"><div class="project-visual finance"><span class="visual-label">FINTECH / 03</span><div class="finance-mark">↗</div><div class="visual-foot">STONKS APP <span>↗</span></div></div><div class="project-info"><div><p>APP MOBILE · DATI</p><h3>Stonks App</h3><span>Mercati crypto, portfolio e notizie in un’unica applicazione.</span></div><b>↗</b></div></a></div></div></section>
+<section class="section team" id="team"><div class="wrap"><div class="section-heading"><div><p class="eyebrow dark">04 / LE PERSONE</p><h2>Una squadra piccola.<br><em>Una visione condivisa.</em></h2></div><p>Tre laureati in Ingegneria Informatica con competenze complementari e una passione comune per lo sviluppo di prodotti digitali.</p></div><div class="team-grid"><article><div class="portrait"><img src="assets/filippo.jpg?v=2" alt="Filippo Carletti" loading="lazy" width="900" height="900"></div><h3>Filippo Carletti</h3><p>Full-stack developer</p><span>Laureato in Ingegneria Informatica. Si occupa di sviluppo full-stack, interfacce ed esperienza utente.</span></article><article><div class="portrait"><img src="assets/paolo.jpg" alt="Paolo Iacovissi" loading="lazy" width="605" height="506"></div><h3>Paolo Iacovissi</h3><p>Lead developer</p><span>Laureato in Ingegneria Informatica. Guida il team e si occupa di sistemi distribuiti, cybersecurity e gestione progetti.</span></article><article><div class="portrait"><img src="assets/yari.jpg" alt="Yari Bellardini" loading="lazy" width="900" height="900"></div><h3>Yari Bellardini</h3><p>Full-stack developer</p><span>Laureato in Ingegneria Informatica. Si occupa di sviluppo full-stack, backend e API.</span></article></div></div></section>
+<section class="contact" id="contatti"><div class="wrap contact-inner"><div><p class="eyebrow light">05 / INIZIAMO UNA CONVERSAZIONE</p><h2>Avete un progetto<br><em>in mente?</em></h2><p>Raccontateci la vostra idea, le vostre esigenze e gli obiettivi che volete raggiungere. Troveremo insieme il punto di partenza.</p></div><form class="contact-form" id="contact-form"><div class="form-row"><label>Nome <span>*</span><input name="nome" required autocomplete="name" placeholder="Mario Rossi"></label><label>Email <span>*</span><input name="email" type="email" required autocomplete="email" placeholder="mario@example.com"></label></div><div class="form-row"><label>Azienda<input name="azienda" autocomplete="organization" placeholder="Acme S.r.l. (opzionale)"></label><label>Budget indicativo<select name="budget"><option value="">—</option><option>&lt; 1k €</option><option>1-5k €</option><option>5-15k €</option><option>15k+ €</option><option>non lo so ancora</option></select></label></div><label>Il progetto <span>*</span><textarea name="messaggio" required rows="5" placeholder="Cosa vuoi costruire, quando ti serve, come possiamo aiutare..."></textarea></label><div class="form-bottom"><span>* Campi obbligatori</span><button class="button light-button" type="submit">Invia messaggio <span>↗</span></button></div><p class="form-status" role="status" aria-live="polite"></p></form></div></section>
+</main><footer><div class="wrap footer-inner"><a class="brand" href="#top">GN<span>d3v</span><i>.</i></a><p>Software pensato per le persone.</p><span>© 2026 GN d3v · Italia</span><a href="#top">Torna su ↑</a></div></footer>
+<script>document.querySelectorAll(".mobile-menu nav a").forEach(function(link){link.addEventListener("click",function(){document.querySelector(".mobile-menu").open=false;});});</script>
+<script>
+const contactForm = document.getElementById('contact-form');
+contactForm.addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const data = new FormData(contactForm);
+  const button = contactForm.querySelector('button');
+  const status = contactForm.querySelector('.form-status');
+  button.disabled = true; button.textContent = 'Invio in corso…'; status.textContent = '';
+  try {
+    const response = await fetch('https://formsubmit.co/ajax/gnd3vs@gmail.com', {method:'POST', headers:{'Content-Type':'application/json', 'Accept':'application/json'}, body:JSON.stringify({_subject:`Nuovo contatto da ${data.get('nome')}`, nome:data.get('nome'), email:data.get('email'), azienda:data.get('azienda') || 'Non specificata', budget:data.get('budget') || 'Non specificato', messaggio:data.get('messaggio')})});
+    if (!response.ok) throw new Error('Invio non riuscito');
+    contactForm.innerHTML = '<div class="form-success" role="status"><strong>Messaggio ricevuto.</strong><p>Ti rispondiamo entro 48 ore.</p></div>';
+  } catch (error) { status.textContent = 'Si è verificato un errore. Riprova più tardi.'; button.disabled = false; button.textContent = 'Invia messaggio ↗'; }
+});
+</script>
+</body></html>
