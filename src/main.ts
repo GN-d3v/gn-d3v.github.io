@@ -84,3 +84,72 @@ if (mobileMenu) {
     if (event.target instanceof Node && !mobileMenu.contains(event.target)) mobileMenu.open = false;
   });
 }
+
+// A phone uses disclosure controls; a wide screen uses the existing tab interface.
+const phoneLayout = window.matchMedia('(max-width: 760px)');
+const serviceDisclosures: HTMLButtonElement[] = [];
+serviceTabs.forEach((tab) => {
+  const panel = document.getElementById(tab.getAttribute('aria-controls') || '');
+  if (!panel) return;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'service-disclosure';
+  button.id = `${tab.id}-disclosure`;
+  button.setAttribute('aria-controls', panel.id);
+  button.setAttribute('aria-expanded', 'false');
+  button.append(document.createTextNode(tab.textContent || ''));
+  const indicator = document.createElement('span');
+  indicator.setAttribute('aria-hidden', 'true');
+  indicator.textContent = '+';
+  button.append(indicator);
+  panel.before(button);
+  serviceDisclosures.push(button);
+  button.addEventListener('click', () => {
+    const opening = button.getAttribute('aria-expanded') !== 'true';
+    serviceDisclosures.forEach((item) => {
+      const expanded = item === button && opening;
+      item.setAttribute('aria-expanded', String(expanded));
+      const content = document.getElementById(item.getAttribute('aria-controls') || '');
+      if (content) content.hidden = !expanded;
+      const symbol = item.querySelector('span');
+      if (symbol) symbol.textContent = expanded ? '−' : '+';
+    });
+    if (opening && button.getBoundingClientRect().top < 80) {
+      button.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+  });
+});
+const processDisclosure = document.querySelector<HTMLDetailsElement>('.process-disclosure');
+function setResponsiveInteraction(): void {
+  const main = document.querySelector('main');
+  const approach = document.getElementById('approccio');
+  const reference = document.getElementById(phoneLayout.matches ? 'team' : 'servizi');
+  if (main && approach && reference) main.insertBefore(approach, reference);
+  if (processDisclosure) processDisclosure.open = !phoneLayout.matches;
+  serviceDisclosures.forEach((button, index) => {
+    const panel = document.getElementById(button.getAttribute('aria-controls') || '');
+    if (!panel) return;
+    button.setAttribute('aria-expanded', 'false');
+    const symbol = button.querySelector('span');
+    if (symbol) symbol.textContent = '+';
+    panel.setAttribute('role', phoneLayout.matches ? 'region' : 'tabpanel');
+    panel.setAttribute('aria-labelledby', phoneLayout.matches ? button.id : serviceTabs[index].id);
+    panel.hidden = phoneLayout.matches || serviceTabs[index].getAttribute('aria-selected') !== 'true';
+  });
+}
+setResponsiveInteraction();
+phoneLayout.addEventListener('change', setResponsiveInteraction);
+
+const dockLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.mobile-dock a'));
+if ('IntersectionObserver' in window) {
+  const dockObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      dockLinks.forEach((link) => {
+        if (link.hash === `#${entry.target.id}`) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    });
+  }, { rootMargin: '-15% 0px -55% 0px' });
+  document.querySelectorAll('main > section').forEach((section) => dockObserver.observe(section));
+}
