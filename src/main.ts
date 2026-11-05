@@ -34,7 +34,8 @@ if (contactForm) {
             messaggio: data.get('messaggio'),
           }),
         });
-        if (!response.ok) throw new Error('Invio non riuscito');
+        const result: { success?: string | boolean } = await response.json();
+        if (!response.ok || result.success === false || result.success === 'false') throw new Error('Invio non riuscito');
         form.innerHTML = '<div class="form-success" role="status"><strong>Messaggio ricevuto.</strong><p>Ti rispondiamo entro 48 ore.</p></div>';
       } catch {
         formStatus.textContent = 'Si è verificato un errore. Riprova più tardi.';
@@ -71,19 +72,15 @@ serviceTabs.forEach((tab, index) => {
   });
 });
 
-const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-if ('IntersectionObserver' in window && !motionPreference.matches) {
-  const animated = document.querySelectorAll<HTMLElement>('.section-heading, .split, .project, .team-grid article, .contact-inner');
-  const observer = new IntersectionObserver((entries, currentObserver) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        currentObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  animated.forEach((element) => {
-    element.classList.add('reveal-on-scroll');
-    observer.observe(element);
+
+if (mobileMenu) {
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && mobileMenu.open) {
+      mobileMenu.open = false;
+      mobileMenu.querySelector<HTMLElement>('summary')?.focus();
+    }
+  });
+  document.addEventListener('click', (event: MouseEvent) => {
+    if (event.target instanceof Node && !mobileMenu.contains(event.target)) mobileMenu.open = false;
   });
 }
