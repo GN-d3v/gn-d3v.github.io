@@ -31,7 +31,6 @@ if (contactForm) {
             nome: data.get('nome'),
             email: data.get('email'),
             azienda: data.get('azienda') || 'Non specificata',
-            budget: data.get('budget') || 'Non specificato',
             messaggio: data.get('messaggio'),
           }),
         });
@@ -44,4 +43,47 @@ if (contactForm) {
       }
     });
   }
+}
+
+const serviceTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.service-tabs [role="tab"]'));
+function selectServiceTab(tab: HTMLButtonElement, focus = false): void {
+  for (const item of serviceTabs) {
+    const selected = item === tab;
+    item.setAttribute('aria-selected', String(selected));
+    item.tabIndex = selected ? 0 : -1;
+    const panelId = item.getAttribute('aria-controls');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    if (panel) panel.hidden = !selected;
+  }
+  if (focus) tab.focus();
+}
+serviceTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectServiceTab(tab));
+  tab.addEventListener('keydown', (event: KeyboardEvent) => {
+    let next = index;
+    if (event.key === 'ArrowRight') next = (index + 1) % serviceTabs.length;
+    else if (event.key === 'ArrowLeft') next = (index - 1 + serviceTabs.length) % serviceTabs.length;
+    else if (event.key === 'Home') next = 0;
+    else if (event.key === 'End') next = serviceTabs.length - 1;
+    else return;
+    event.preventDefault();
+    selectServiceTab(serviceTabs[next], true);
+  });
+});
+
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+if ('IntersectionObserver' in window && !motionPreference.matches) {
+  const animated = document.querySelectorAll<HTMLElement>('.section-heading, .split, .project, .team-grid article, .contact-inner');
+  const observer = new IntersectionObserver((entries, currentObserver) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        currentObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  animated.forEach((element) => {
+    element.classList.add('reveal-on-scroll');
+    observer.observe(element);
+  });
 }
