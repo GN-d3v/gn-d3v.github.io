@@ -88,7 +88,9 @@ em{font-style:normal;font-weight:inherit;color:#8eacff}
 .service-content>p:not(.eyebrow){color:var(--copy);font-size:15px;line-height:1.8;max-width:480px}
 .service-link{color:#ffae78;margin-top:8px}
 .service-visual{width:100%;max-width:400px;justify-self:center;display:grid;place-items:center}
+.visual-art{position:relative;width:100%;aspect-ratio:400/330}
 .service-visual svg{display:block;width:100%;height:auto;overflow:visible}
+.visual-art>.visual-float{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
 .service-visual svg circle,.service-visual .visual-accent{fill:var(--gn-orange)}
 .service-visual .visual-main{fill:var(--gn-navy);stroke:#6c91ea;stroke-width:1.5}
 .service-visual .visual-line{stroke:#83a2eb;stroke-width:1.5;stroke-linecap:round}
@@ -149,11 +151,14 @@ footer{padding:32px 0;background:#08142c}
 @media(prefers-reduced-motion:no-preference){
  .service-panel:not([hidden]) .service-content{animation:enter .35s ease-out both}
  .service-panel:not([hidden]) .service-visual{animation:enter .45s ease-out both}
- .service-panel:not([hidden]) .visual-float{animation:float 5s ease-in-out infinite}
- .service-panel:not([hidden]) .visual-chart{stroke-dasharray:240;animation:draw 1.2s ease-out both}
+ /* Animate the image, not an inner SVG group: Gecko can composite this layer. */
+ .service-panel:not([hidden]) .visual-float{will-change:transform;animation:visual-float 4s ease-in-out infinite}
+ .service-panel:not([hidden]) .visual-chart{stroke-dasharray:1;animation:draw 1.2s ease-out both}
  @keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
- @keyframes float{50%{transform:translateY(-5px)}}
- @keyframes draw{from{stroke-dashoffset:240}to{stroke-dashoffset:0}}
+ @keyframes visual-float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-2.121212%,0)}}
+ @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+ .service-panel:not([hidden]) .visual-chart-end{animation:chart-end .2s 1s both}
+ @keyframes chart-end{from{opacity:0}to{opacity:1}}
 }
 /* Tablet */
 @media(max-width:1000px){
@@ -230,7 +235,7 @@ footer{padding:32px 0;background:#08142c}
  .service-content>p:not(.eyebrow){font-size:14px;margin-bottom:12px}
  .service-link{font-size:12px;min-height:44px}
  .service-visual{width:100%;max-width:220px;margin-inline:auto}
- .service-visual svg{max-height:170px}
+ .visual-art{max-width:206px}
  .visual-caption{display:none}
  .project-grid{display:block}
  .project{display:grid;grid-template-columns:88px minmax(0,1fr);gap:18px;padding:24px 0;border-top:1px solid var(--line)}
